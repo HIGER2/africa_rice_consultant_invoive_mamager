@@ -80,6 +80,7 @@ class PurchaseRequestService
             DB::beginTransaction();
             // check liaison officer
             $liaisonOfficer = User::find($data['budget_officer_id'])->value('email');
+
             if (!$liaisonOfficer) {
                 // throw new \Exception('Liaison officer not found.');
                 ValidationException::withMessages([
