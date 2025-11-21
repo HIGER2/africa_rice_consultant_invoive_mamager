@@ -79,8 +79,8 @@ Route::middleware('auth')->group(function () {
         // PURCHASE REQUESTS
         Route::controller(PurchaseRequestController::class)->prefix('requests')->group(function () {
             Route::get('/', 'index')->name('admin.requests.index');
-            Route::get('/approve/{uuid}', 'approveFromMail')->name('purchase-request.approve');
-            Route::get('/reject/{uuid}', 'rejectFromMail')->name('purchase-request.reject');
+            // Route::get('/approve/{uuid}', 'approveFromMail')->name('purchase-request.approve');
+            // Route::get('/reject/{uuid}', 'rejectFromMail')->name('purchase-request.reject');
             Route::get('/{uuid}', 'show')->name('admin.requests.show');
         });
 
@@ -90,5 +90,12 @@ Route::middleware('auth')->group(function () {
         Route::controller(MonthlyReportController::class)->prefix('reports')->group(function () {
             Route::get('/', 'index')->name('admin.reports.index');
         });
+    });
+
+
+    // PURCHASE REQUESTS
+    Route::controller(PurchaseRequestController::class)->prefix('requests')->group(function () {
+        Route::get('/approve/{uuid}', 'approveFromMail')->name('purchase-request.approve');
+        Route::get('/reject/{uuid}', 'rejectFromMail')->name('purchase-request.reject');
     });
 });
