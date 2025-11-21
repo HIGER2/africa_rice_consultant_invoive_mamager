@@ -235,7 +235,13 @@ class PurchaseRequestService
         $order = null;
         if ($status === 'approved') {
             // Calcule infos PO
-            $liaison_officer = User::firstWhere('role', 'liaisonOfficer')->value('id');
+            $liaison_officer = User::firstWhere('role', 'liaisonOfficer')->value('email');
+            if (!$liaison_officer) {
+                // throw new \Exception('Liaison officer not found.');
+                ValidationException::withMessages([
+                    'message' => 'Liaison officer not found.'
+                ]);
+            }
             $totalQty = $global->total_quantity;
             $totalItems = $global->total_item;
             $totalAmount = $global->total_amount;
@@ -254,7 +260,7 @@ class PurchaseRequestService
                 'purchaseRequest.budgetOfficer'
             )->find($order->id);
             // Ensuite envoie le mail
-            Mail::to("exe@example.com")->send(new PurchaseOrderBudgetMail($order));
+            Mail::to($liaison_officer)->send(new PurchaseOrderBudgetMail($order));
         }
         return $order;
     }
