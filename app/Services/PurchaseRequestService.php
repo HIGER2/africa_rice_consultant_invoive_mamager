@@ -235,7 +235,7 @@ class PurchaseRequestService
         $order = null;
         if ($status === 'approved') {
             // Calcule infos PO
-            $liaison_officer = User::firstWhere('role', 'liaisonOfficer')->value('email');
+            $liaison_officer = User::firstWhere('role', 'liaisonOfficer');
             if (!$liaison_officer) {
                 // throw new \Exception('Liaison officer not found.');
                 ValidationException::withMessages([
@@ -247,7 +247,7 @@ class PurchaseRequestService
             $totalAmount = $global->total_amount;
             $order = PurchaseOrder::create([
                 'purchase_global_id'  => $global->id,
-                "liaison_officer_id" => $liaison_officer,
+                "liaison_officer_id" => $liaison_officer->id,
                 // 'liaison_officer_id'  => Auth::id() ?? null,
                 'total_item'          => $totalItems,
                 'total_amount'        => $totalAmount,
@@ -260,7 +260,7 @@ class PurchaseRequestService
                 'purchaseRequest.budgetOfficer'
             )->find($order->id);
             // Ensuite envoie le mail
-            Mail::to($liaison_officer)->send(new PurchaseOrderBudgetMail($order));
+            Mail::to($liaison_officer->email)->send(new PurchaseOrderBudgetMail($order));
         }
         return $order;
     }
