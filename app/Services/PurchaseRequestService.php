@@ -83,7 +83,7 @@ class PurchaseRequestService
             if (!$liaisonOfficer) {
                 // throw new \Exception('Liaison officer not found.');
                 ValidationException::withMessages([
-                    'message' => 'Liaison officer not found.'
+                    'message' => 'Budget officer not found.'
                 ]);
             }
             // 1️⃣ GROUPER LES PRODUITS PAR FOURNISSEUR
