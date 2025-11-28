@@ -18,10 +18,15 @@ class CheckRole
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $user = Auth::user();
-        if (!$user || !in_array($user->role, $roles)) {
-            // abort(403, 'Unauthorized'); // ou redirect vers dashboard
-            return Inertia::location('/purchase-orders');
+
+        if (!$user) {
+            return redirect()->route('login');
         }
+
+        if (!empty($roles) && !in_array($user->role, $roles)) {
+            return redirect('/')->with('error', 'You do not have permission to access this resource.');
+        }
+
         return $next($request);
     }
 }

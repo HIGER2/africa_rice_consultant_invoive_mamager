@@ -21,7 +21,7 @@ const props = defineProps({
       </div>
       <ul class="flex items-center ">
         <template  v-for="item in items" :key="item.link">
-          <li class="" v-if="!item.role || item.role === user.role">
+          <li class="" >
               <a
                 :href="item.link"
                 class="flex items-center p-2 gap-1 rounded-box text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-200 font-[500] text-[14px]"

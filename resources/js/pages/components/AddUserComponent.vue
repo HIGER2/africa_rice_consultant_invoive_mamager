@@ -12,11 +12,9 @@ const newUser = reactive({
     role: 'Requester'
 });
 const options =[
-    {label:'Requester',value:'Requester'},
-    {label:'BudgetOfficer',value:'BudgetOfficer'},
-    {label:'LiaisonOfficer',value:'LiaisonOfficer'},
-    {label:'Vendor',value:'Vendor'},
-    {label:'Finance',value:'Finance'},
+    {label:'admin',value:'admin'},
+    {label:'finance',value:'finance'},
+    {label:'hr',value:'hr'},
 ]
 const submitForm = () => {
     emit('handleAddUser', { ...newUser });

@@ -1,16 +1,16 @@
 <template>
 
-  <div class="overflow-x-auto   border-base-content/5 bg-base-100">
+  <div class="overflow-x-auto    border-base-content/5 bg-base-100">
   <table class="table">
     <!-- head -->
-    <thead class="bg-zinc-50">
+    <thead class="bg-zinc-50   text-gray-500">
       <tr>
         <!-- <th>#</th> -->
-          <th v-for="col in columns" :key="col.key">{{ col.label }}</th>
+          <th v-for="col in columns" :key="col.key" class="font-bold">{{ col.label }}</th>
       </tr>
     </thead>
     <tbody>
-    <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="hover:bg-zinc-50 cursor-pointer">
+    <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="hover:bg-zinc-50 text-nowrap font-medium text-gray-700 text-sm cursor-pointer">
           <!-- <th>{{ rowIndex + 1 }}</th> -->
           <td v-for="col in columns" :key="col.key">
             <slot :name="col.key" :row="row">

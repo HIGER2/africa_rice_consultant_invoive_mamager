@@ -19,32 +19,65 @@ class User extends Authenticatable
         'last_name',
         'email',
         'phone',
-        "pin",
+        'pin',
         'role',
         'password',
-        'center_id',
         'otp_expires_at',
-        'status'
+        'status',
+        'consultant_id',
+        'supervisor_id',
+        'employee_id',
+        'uuid',
     ];
 
     protected $hidden = ['password', 'pin', 'remember_token'];
 
-    // Relation avec les demandes
-    public function purchaseRequests()
+    // Relations with Consultant and Employee
+    public function consultant()
     {
-        return $this->hasMany(PurchaseRequest::class, 'requester_id');
+        return $this->belongsTo(Consultant::class);
     }
 
-    // Relation avec les approbations
-    public function approvals()
+
+    public function supervisor()
     {
-        return $this->hasMany(PurchaseApproval::class, 'approved_by');
+        return $this->belongsTo(Supervisor::class);
     }
 
-    // Relation avec les commandes confirmées
-    public function purchaseOrders()
+    public function employee()
     {
-        return $this->hasMany(PurchaseOrder::class, 'liaison_officer_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    // Role check methods
+    public function isConsultant(): bool
+    {
+        return $this->role === 'consultant';
+    }
+
+    public function isSupervisor(): bool
+    {
+        return $this->role === 'supervisor';
+    }
+
+    public function isHR(): bool
+    {
+        return $this->role === 'hr';
+    }
+
+    public function isFinance(): bool
+    {
+        return $this->role === 'finance';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function hasRole(...$roles): bool
+    {
+        return in_array($this->role, $roles);
     }
 
     protected static function boot()

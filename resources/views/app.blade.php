@@ -9,5 +9,11 @@
   </head>
   <body>
     @inertia
+   <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+   {{-- <script type="module" src="https://unpkg.com/cally"></script> --}}
+
+<script>
+  // var picker = new Pikaday({ field: document.getElementById('myDatepicker') });
+</script>
   </body>
 </html>

@@ -30,8 +30,8 @@ class AuthService
             'email' => 'required|email'
         ]);
         $user = User::where('email', $request->email)->first();
-        $roleAuth = ['admin', 'Requester', 'BudgetOfficer', 'Vendor', 'Finance'];
-        if (!in_array($user->role, $roleAuth)) {
+        $roleAuth = ['admin', 'consultant', 'supervisor', 'hr', 'finance', 'Requester', 'BudgetOfficer', 'Vendor', 'Finance'];
+        if (!$user || !in_array($user->role, $roleAuth)) {
             throw ValidationException::withMessages([
                 'email' => 'You are not authorized to access this application.'
             ]);
@@ -101,11 +101,15 @@ class AuthService
             'otp_expires_at' => null
         ]);
         Auth::login($user);
-
+        // Determine redirect based on role
         $redirectTo = "/";
-        if ($user->role === 'LiaisonOfficer') {
-            $redirectTo = "/purchase-orders";
-        }
+        // if ($user->role === 'LiaisonOfficer') {
+        //     $redirectTo = "/purchase-orders";
+        // } elseif ($user->role === 'consultant') {
+        //     $redirectTo = "/consultants";
+        // } elseif (in_array($user->role, ['supervisor', 'hr', 'finance'])) {
+        //     $redirectTo = "/consultants"; // or dashboard for employees
+        // }
         return Inertia::location($redirectTo);
     }
 
