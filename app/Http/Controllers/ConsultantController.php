@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ConsultantRequest;
 use App\Http\Resources\ConsultantDetailResource;
+use App\Http\Resources\ConsultantInvoice;
 use App\Http\Resources\ConsultantResource;
 use App\Models\BankDetail;
 use App\Models\Consultant;
@@ -13,17 +14,47 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ConsultantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $consultants = Consultant::with('bankDetails', 'supervisor')->orderByDesc('created_at')->get();
+        $query = Consultant::with('bankDetails', 'supervisor')->orderByDesc('created_at');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhere('resno', 'LIKE', "%$search%");
+            });
+        }
         // Use resource collection and keep pagination structure
+        $consultants = $query->get();
         $data = ConsultantResource::collection($consultants);
         return Inertia::render('views/Consultant', [
             'consultants' => $data,
+            'filters' => [
+                'search' => $request->search,
+            ],
+            'urls' => [
+                'create' => route('consultants.create'),
+                'index'  => route('consultants.index'),
+            ],
+        ]);
+    }
+
+    public function innvoice($uuid)
+    {
+        $consultants = Consultant::with(['bankDetails', 'supervisor', 'invoices'])
+            ->where('uuid', $uuid)->first();
+
+        // Use resource collection and keep pagination structure
+        $data = new ConsultantInvoice($consultants);
+        return Inertia::render('views/ConsultantInvoice', [
+            'consultant' => $data,
             'urls' => [
                 'create' => route('consultants.create'),
                 'index'  => route('consultants.index'),

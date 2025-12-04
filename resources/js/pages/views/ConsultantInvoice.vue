@@ -8,22 +8,23 @@ import InvoiceStatusBadge from '../components/InvoiceStatusBadge.vue';
 import { exportToExcel } from '../../composables';
 
 const props = defineProps({
-  invoices: Object,
+  consultant: Object,
   urls: Object,
   filters: Object,
 })
-const from = ref(props.filters.from);
-const to = ref(props.filters.to);
-const search = ref(props.filters.search);
+
+// const from = ref(props.filters.from);
+// const to = ref(props.filters.to);
+// const search = ref(props.filters.search);
 
 const columns = [
   // { label: "ID", key: "id" },
   // { label: "UUID", key: "uuid" },
   // { label: "Consultant ID", key: "consultant_id" },
   { label: "Invoice Number", key: "invoice_number" },
-   { label: "ResNo", key: "resno" },
-  { label: "Name", key: "name" },
-  { label: "Last Name", key: "last_name" },
+  //  { label: "ResNo", key: "resno" },
+  // { label: "Name", key: "name" },
+  // { label: "Last Name", key: "last_name" },
   { label: "Amount to Pay", key: "honoraires_a_payer" },
   { label: "Status", key: "status" },
   { label: "Location", key: "location" },
@@ -41,10 +42,10 @@ const columns = [
   // { label: "Clearance Required", key: "clearance_required" },
   { label: "Clearance File", key: "clearance_file" },
  
-  { label: "Email", key: "email" },
-  { label: "Phone", key: "phone" },
-  { label: "Position", key: "position" },
-  { label: "Department", key: "department" },
+  // { label: "Email", key: "email" },
+  // { label: "Phone", key: "phone" },
+  // { label: "Position", key: "position" },
+  // { label: "Department", key: "department" },
   { label: "Bank Name", key: "bank_name" },
   { label: "IBAN", key: "iban" },
   { label: "SWIFT Code", key: "swift_code" },
@@ -64,17 +65,18 @@ const columns = [
 
   // { label: "actions", key: "actions" },
 ];
-watch([from, to, search], () => {
-  router.get(props.urls.index, {
-    from: from.value,
-    to: to.value,
-    search: search.value
-  }, {
-    preserveState: true,
-    preserveScroll: true,
-    replace: true, // Évite d'empiler l'historique
-  })
-})
+
+// watch([from, to, search], () => {
+//   router.get(props.urls.index, {
+//     from: from.value,
+//     to: to.value,
+//     search: search.value
+//   }, {
+//     preserveState: true,
+//     preserveScroll: true,
+//     replace: true, // Évite d'empiler l'historique
+//   })
+// })
 
 const clearFilters = () => {
   // from.value = ""
@@ -134,14 +136,28 @@ const exportCSV=(columns,data)=>{
       <div class="p-6 max-w-full mx-auto space-y-6">
 
       <!-- Header + bouton Ajouter -->
+      <!-- <pre>{{ consultant?.data?.invoices }}</pre> -->
+          <!-- Consultant Info -->
+          <section class="grid grid-cols-1 print:grid-cols-2 print:gap-4 md:grid-cols-2 gap-4  pb-4">
+            <h1 class="text-2xl font-bold mb-5">Consultant</h1>
+            <div><span class="font-semibold">ResNo:</span> {{ consultant?.data.resno }}</div>
+            <div><span class="font-semibold">Name:</span> {{ consultant?.data.name }} {{ consultant?.data.last_name }}</div>
+            <div><span class="font-semibold">Contract Period:</span> {{ consultant?.data.contract_period_from }} → {{ consultant?.data.contract_period_to }}</div>
+            <div><span class="font-semibold">Email:</span> {{ consultant?.data.email }}</div>
+            <div><span class="font-semibold">Phone:</span> {{ consultant?.data.phone }}</div>
+            <div><span class="font-semibold">Position:</span> {{ consultant?.data.position }}</div>
+            <div><span class="font-semibold">Department:</span> {{ consultant?.data.department }}</div>
+            <!-- <div><span class="font-semibold">Bank:</span> {{ consultant?.data.bank_name }}</div>
+            <div><span class="font-semibold">IBAN OR RIB:</span> {{ consultant?.data.iban }}</div>
+            <div><span class="font-semibold">SWIFT:</span> {{ consultant?.data.swift_code }}</div> -->
+          </section>
           <div class=" mb-4">
             <h1 class="text-2xl font-bold mb-5">Invoice</h1>
               <div class="flex justify-between items-center mb-4">
 
               <!-- Date filters -->
-                <div class="flex gap-4 items-end">
+                <!-- <div class="flex gap-4 items-end">
                   <div>
-                    <!-- {{ props.filters }} -->
                     <label class="block text-sm font-medium">From</label>
                     <input 
                       type="date" 
@@ -173,30 +189,24 @@ const exportCSV=(columns,data)=>{
                     Clear
                   </button>
 
-                </div>
+                </div> -->
 
 
               <!-- Search + Add -->
               <div class="flex gap-3 items-center">
-                <!-- <input
-                  type="search"
-                  v-model="search"
-                  placeholder="Search invoices..."
-                  class="input input-bordered w-60"
-                /> -->
 
                 <button 
-                @click="exportCSV(columns,invoices.data)"
+                @click="exportCSV(columns,consultant?.data?.invoices)"
                 class="btn ">
                   Export <i class="uil uil-export"></i>
                 </button>
                 <!-- {{ user.role }} -->
                 <template v-if="user.role=='consultant' || user.role=='admin'">
                     
-                 <Link :href="props.urls.create" class="btn btn-soft border">
+                 <!-- <Link :href="props.urls.create" class="btn btn-soft border">
                  New Invoice
                  <i class="uil uil-plus-circle"></i>
-                </Link>
+                </Link> -->
                 </template>
               </div>
 
@@ -252,7 +262,7 @@ const exportCSV=(columns,data)=>{
           </div>
 
         <!-- Tableau -->
-          <TableComponent :columns="columns" :data="invoices.data">
+          <TableComponent :columns="columns" :data="consultant?.data?.invoices">
             <template #actions="{ row }">
               <div class="flex gap-2">
                 <Link
@@ -262,17 +272,10 @@ const exportCSV=(columns,data)=>{
                   View
                   <i class="uil uil-eye"></i>
                 </Link>
-                <!-- <Link
-                  :href="`/invoices/${row.uuid}/edit`"
-                  class="btn btn-sm btn-warning"
-                >
-                  Edit
-                </Link> -->
               </div>
             </template>
             <template #honoraires_a_payer="{ row }">
               <span class="text-blue-700 font-black">{{ Number(row.honoraires_a_payer) }}</span>
-              <!-- <span>{{ Number(row.honoraires_a_payer).toLocaleString('en-US', { style: 'currency', currency: '' }) }}</span> -->
             </template>
             <template #status="{ row }">
               <InvoiceStatusBadge :status="row.status" />
@@ -289,13 +292,6 @@ const exportCSV=(columns,data)=>{
                   <i class="uil uil-download-alt text-[15px]"></i>
                 </a>
                 <span v-else>N/A</span>
-
-                <!-- <Link
-                  :href="`/invoices/${row.uuid}/edit`"
-                  class="btn btn-sm btn-warning"
-                >
-                  Edit
-                </Link> -->
               </div>
             </template>
 
@@ -311,12 +307,6 @@ const exportCSV=(columns,data)=>{
                   <i class="uil uil-download-alt text-[15px]"></i>
                 </a>
                 <span v-else>N/A</span>
-                <!-- <Link
-                  :href="`/invoices/${row.uuid}/edit`"
-                  class="btn btn-sm btn-warning"
-                >
-                  Edit
-                </Link> -->
               </div>
             </template>
           </TableComponent>

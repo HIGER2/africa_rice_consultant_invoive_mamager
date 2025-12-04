@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceDetailResource;
 use App\Http\Resources\InvoiceResource;
 use App\Models\BankDetail;
 use App\Models\Consultant;
@@ -42,7 +43,7 @@ class InvoiceController extends Controller
 
         // FILTRE : RECHERCHE
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = trim($request->search);
 
             $query->where(function ($q) use ($search) {
                 $q->where('invoice_number', 'LIKE', "%$search%")
@@ -56,7 +57,7 @@ class InvoiceController extends Controller
         $invoices = $query->paginate(15)->withQueryString();
 
         return Inertia::render('views/Invoice', [
-            'invoices' => InvoiceResource::collection($invoices),
+            'invoices' => InvoiceDetailResource::collection($invoices),
             'filters' => [
                 'from' => $from,
                 'to' => $to,

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [ConsultantController::class, 'create'])->name('consultants.create');
         Route::post('/', [ConsultantController::class, 'store'])->name('consultants.store');
         Route::get('/{uuid}', [ConsultantController::class, 'show'])->name('consultants.show');
+        Route::get('/invoice/{uuid}', [ConsultantController::class, 'innvoice'])->name('consultants.innvoice');
         Route::get('/{uuid}/edit', [ConsultantController::class, 'edit'])->name('consultants.edit');
         Route::put('/{consultant}', [ConsultantController::class, 'update'])->name('consultants.update');
         Route::delete('/{uuid}', [ConsultantController::class, 'destroy'])->name('consultants.destroy');

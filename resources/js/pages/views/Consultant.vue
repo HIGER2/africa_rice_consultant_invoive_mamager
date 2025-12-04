@@ -4,11 +4,14 @@ import { Link, router } from '@inertiajs/vue3'
 import TableComponent from '../components/TableComponent.vue';
 import AdminLayout from '../../layouts/AdminLayout.vue';
 import { exportToExcel } from '../../composables';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   consultants: Object,
   urls: Object,
+  filters: Object,
 })
+const search = ref(props.filters.search);
 
 const columns = [
   { label: "ResNo", key: "resno" },
@@ -55,7 +58,7 @@ const columns = [
   // { label: "Banque", key: "bank_name" },
   // { label: "IBAN", key: "iban" },
   // { label: "SWIFT", key: "swift_code" },
-  { label: "", key: "actions" },
+  // { label: "", key: "actions" },
 ];
 
 function remove(uuid) {
@@ -75,6 +78,23 @@ const exportCSV=(columns,data)=>{
     item.key !== 'actions'
 ),data)
 }
+
+let timeOut =null
+
+watch([search], () => {
+ timeOut = setTimeout(() => {
+    router.get(props.urls.index, {
+    search: search.value
+      }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true, // Évite d'empiler l'historique
+        onFinish:()=>{
+          clearTimeout(timeOut)
+        }
+      })
+ }, 400);
+})
 </script>
 
 <template>
@@ -84,10 +104,21 @@ const exportCSV=(columns,data)=>{
  <div class="p-6 max-w-full mx-auto space-y-6">
 
     <!-- Header + bouton Ajouter -->
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold">Consultants</h1>
-       <div class="flex items-center gap-4">
-            <button 
+    <div class="mb-4">
+      <h1 class="text-2xl font-bold mb-6">Consultants</h1>
+
+      <div class="flex items-end justify-between w-full">
+        <div>
+          <label class="block text-sm font-medium">Search</label>
+          <input 
+            type="search" 
+            v-model="search" 
+            class="input input-bordered w-64" 
+            placeholder="Search  consultant..."
+          />
+        </div>
+      <div class="flex items-center gap-4">
+          <button 
         @click="exportCSV(columns,consultants.data)"
         class="btn ">
           Export <i class="uil uil-export"></i>
@@ -96,10 +127,11 @@ const exportCSV=(columns,data)=>{
         :href="urls.create"
         class="btn btn-soft "
       >
-         New consultant
+        New consultant
           <i class="uil uil-plus-circle"></i>
       </Link>
-       </div>
+      </div>
+      </div>
     </div>
 
     <!-- Tableau -->
@@ -125,8 +157,15 @@ const exportCSV=(columns,data)=>{
             Voir
           </Link> -->
           <Link
+              :href="`/consultants/invoice/${row.uuid}`"
+              class="btn btn-sm "
+            >
+              Invoice
+              <i class="uil uil-eye"></i>
+            </Link>
+          <Link
             :href="`/consultants/${row.uuid}/edit`"
-            class="btn btn-sm btn-soft"
+            class="btn btn-sm "
           >
             Edit
           </Link>

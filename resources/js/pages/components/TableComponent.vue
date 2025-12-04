@@ -7,19 +7,31 @@
       <tr>
         <!-- <th>#</th> -->
           <th v-for="col in columns" :key="col.key" class="font-bold">{{ col.label }}</th>
+          <th
+          v-if="slots.actions"
+          scope="col"
+          class=" bg-zinc-50   text-gray-500 sticky right-0  font-bold  "
+        >
+          Actions
+        </th>
       </tr>
     </thead>
     <tbody>
-    <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="hover:bg-zinc-50 text-nowrap font-medium text-gray-700 text-sm cursor-pointer">
-
+      <tr v-for="(row, rowIndex) in data" :key="rowIndex" 
+      class=" group text-nowrap font-medium text-gray-700 text-sm cursor-pointer">
           <!-- <th>{{ rowIndex + 1 }}</th> -->
-           
-          <td v-for="col in columns" :key="col.key">
+          <td v-for="col in columns" :key="col.key" class="group-hover:bg-zinc-50">
             
             <slot :name="col.key" :row="row">
               {{ row[col.key] }}
             </slot>
           
+          </td>
+          <td
+            v-if="slots.actions"
+            class="sticky  right-0 group-hover:bg-zinc-50 bg-white"
+          >
+            <slot name="actions" :row="row" />
           </td>
         </tr>
     </tbody>
@@ -50,6 +62,8 @@
 </template>
 
 <script setup>
+import { useSlots } from 'vue';
+
 defineProps({
   columns: {
     type: Array,
@@ -68,4 +82,7 @@ defineProps({
     ]
   }
 })
+
+const slots = useSlots();
+
 </script>
