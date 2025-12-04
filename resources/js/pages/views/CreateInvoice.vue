@@ -39,7 +39,7 @@ const bankFields = [
 const invoiceFields = [
   { label: 'Location', model: 'location', type: 'text', required: true },
  
-  { label: 'Monthly Fees', model: 'honoraires_mensuel', type: 'number', required: true },
+  { label: 'Monthly Fees', model: 'honoraires_mensuel', type: 'number', required: false },
   { label: 'Days Worked', model: 'jours_travailles', type: 'number', required: true },
   { label: ' Worked From Date', model: 'date_from', type: 'date', required: true },
   { label: 'Worked To Date', model: 'date_to', type: 'date', required: true },
@@ -90,6 +90,9 @@ const upload = (e, key) => {
   form.invoice[key] = e.target.files[0]
 }
 const handleSubmit = () => {
+  if (!confirm('Are you sure you want to continue?')) {
+    return;
+  }
     console.log('Form data:', form.data()); // ← Voyez exactement ce qui sera envoyé
     processing.value = true
     form.post('create', {

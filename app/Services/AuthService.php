@@ -27,9 +27,7 @@ class AuthService
     public function sendOtp($request)
     {
         $request->validate([
-            'email' =>  'required',
-            'string',
-            'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+            'email' =>  'required|email:rfc,dns',
         ]);
         $user = User::where('email', $request->email)->first();
         $roleAuth = ['admin', 'consultant', 'supervisor', 'hr', 'finance', 'Requester', 'BudgetOfficer', 'Vendor', 'Finance'];
@@ -55,10 +53,24 @@ class AuthService
             'otp_expires_at' => now()->addMinutes(10)
         ]);
 
+        // Mail::raw(
+        //     "Votre code OTP est : $otp",
+        //     fn($m) =>
+        //     $m->to($user->email)->subject('Votre Code OTP')
+        // );
+
+        // Contenu bilingue de l'email
+        $frMessage = "Bonjour {$user->name},\n\nVoici votre code OTP pour vous connecter à votre compte : {$otp}\nCe code est valide uniquement pour quelques minutes.";
+
+        $enMessage = "Hello {$user->name},\n\nHere is your OTP code to log in to your account: {$otp}\nThis code is valid for a few minutes only.";
+
+        // Envoi de l'email
         Mail::raw(
-            "Votre code OTP est : $otp",
-            fn($m) =>
-            $m->to($user->email)->subject('Votre Code OTP')
+            $frMessage . "\n\n-/-\n\n" . $enMessage, // FR puis EN séparé par un trait
+            function ($message) use ($user) {
+                $message->to($user->email)           // Destinataire : l'utilisateur
+                    ->subject('Code OTP / OTP Code'); // Sujet bilingue
+            }
         );
         return redirect()->route('otp', ['email' => $user->email]);
 

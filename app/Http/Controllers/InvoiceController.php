@@ -127,7 +127,7 @@ class InvoiceController extends Controller
             'invoice.location' => 'required|string',
             'invoice.date_from' => 'required|date',
             'invoice.date_to' => 'required|date',
-            'invoice.honoraires_mensuel' => 'required|numeric',
+            'invoice.honoraires_mensuel' => 'nullable|numeric',
             'invoice.jours_travailles' => 'required|numeric',
             'invoice.date_from' => 'required|date',
             'invoice.date_to' => 'required|date|after_or_equal:invoice.date_from',
@@ -207,17 +207,22 @@ class InvoiceController extends Controller
             $consultant = $invoice->consultant;
             $supervisor = $consultant->supervisor;
 
-            Mail::to($consultant->email)
-                ->send(new InvoiceSubmittedMail($invoice));
+            if (filter_var($consultant->email, FILTER_VALIDATE_EMAIL)) {
+                Mail::to($consultant->email)
+                    ->send(new InvoiceSubmittedMail($invoice));
+            }
 
             // Envoi mail au superviseur
-            Mail::to($supervisor->email)
-                ->send(new InvoiceNotificationSupervisorMail($invoice));
+            if (filter_var($supervisor->email, FILTER_VALIDATE_EMAIL)) {
+                Mail::to($supervisor->email)
+                    ->send(new InvoiceNotificationSupervisorMail($invoice));
+            }
+
 
             return redirect()->route('invoices.show', $invoice->uuid)
                 ->with('success', 'Facture enregistrée et emails envoyés.');
 
-            return redirect()->route('invoices.index')->with('success', 'Consultant created successfully.');
+            // return redirect()->route('invoices.index')->with('success', 'Consultant created successfully.');
             // return response()->json([
             //     'message' => 'Invoice created successfully',
             //     'invoice' => $invoice

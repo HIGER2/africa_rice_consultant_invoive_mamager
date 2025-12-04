@@ -61,6 +61,7 @@ const form = useForm({
 const successMessage = ref('')
 
 // Fonction submit
+
 function submit() {
   form.post('/auth/send-otp', {
     onSuccess: (page) => {

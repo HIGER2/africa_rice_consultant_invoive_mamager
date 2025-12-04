@@ -12,7 +12,7 @@
         <p class="mb-3 text-center text-gray-600">{{ email }}</p>
 
         <form @submit.prevent="submit">
-            <div class="mb-4">
+            <div class="mb-2">
                 <label>OTP Code</label>
                 <input
                     v-model="form.otp"
@@ -23,6 +23,12 @@
                 <div v-if="form.errors.otp" class="text-red-500 text-sm mt-1">
                     {{ form.errors.otp }}
                 </div>
+            </div>
+            <div class="w-full text-sm  mb-3" >
+                <p>If you did not receive the OTP code, please try again.</p>
+                <button type="button" class="text-blue-600 hover:underline cursor-pointer" 
+                @click="resendOtp()"
+                >Resend OTP</button>
             </div>
 
             <button
@@ -49,6 +55,20 @@ const form = useForm({
   email: email,
   otp: ''
 })
+
+
+function resendOtp() {
+  form.post('/auth/send-otp' ,{
+    data:{email:form.email},
+    onSuccess: (page) => {
+      // Inertia::location() fera la redirection vers /otp
+      successMessage.value = 'OTP envoyé avec succès !'
+    },
+    onError: (errors) => {
+      console.log('Erreurs envoyées par Laravel:', errors)
+    }
+  })
+}
 
 function submit() {
   form.post('/auth/verify-otp')

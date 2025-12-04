@@ -32,7 +32,7 @@ const columns=[
 ]
 
 const destroy =(uuid)=>{
-  if (!confirm('Are you sure you want to continue?')) {
+if (!confirm('Are you sure you want to continue?')) {
   return;
 }
   router.delete(`/users/${uuid}`,{
