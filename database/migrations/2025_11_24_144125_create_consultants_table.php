@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('email_cgiar')->unique()->nullable();
             $table->string('last_name')->nullable();
             $table->string('gender')->nullable();
+            $table->string('institution')->nullable();
             $table->string('nationality')->nullable();
             $table->string('country_of_birth')->nullable();
             $table->string('town_city')->nullable();
@@ -33,7 +34,7 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->string('dutypost')->nullable();
             $table->date('original_hire_date')->nullable();
-            $table->integer('seniority')->nullable();
+            $table->decimal('seniority', 8, 2)->nullable();
             $table->date('birthdate')->nullable();
             $table->string('nationality_at_birth')->nullable();
             $table->string('marital_status')->nullable();

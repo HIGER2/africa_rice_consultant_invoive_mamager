@@ -9,7 +9,7 @@ const newUser = reactive({
     name: 'dqwdwq',
     last_name: 'qweqwewq',
     email: 'dqwdwq@qweqwe.com',
-    role: 'Requester'
+    role: 'hr'
 });
 const options =[
     {label:'admin',value:'admin'},
@@ -38,12 +38,12 @@ const submitForm = () => {
         method="post"
         :options="{
             preserveScroll: true,
-            preserveState: true,
+            preserveState: false,
             preserveUrl: true,
             replace: true,
             only: ['users'],
             except: ['secret'],
-            reset: ['page'],
+            reset: ['page', 'name', 'last_name', 'email', 'role'],
         }"
         #default="{
             errors,
@@ -82,7 +82,7 @@ const submitForm = () => {
                 </fieldset>
                 <fieldset class="fieldset w-full">
                     <legend class="fieldset-legend">Role</legend>
-                    <select value="Requester"  class="select w-full" name="role">
+                    <select value="hr"  class="select w-full" name="role">
                         <option disabled selected>Select role</option>
                         <option 
                             v-for="(option,index) in options"
@@ -94,7 +94,12 @@ const submitForm = () => {
                 </fieldset>
                 
                 <button 
-                @click.prevent="submit({ onSuccess: () => reset() })"
+                @click.prevent="submit({ 
+                    onSuccess: () => {
+                        resetAndClearErrors()
+                        reset()
+                    }
+                    })"
                 type="submit"
                 class="px-4 w-full mt-5 text-center py-1 btn  shrink-0  border-b border-default  sm:px-6 gap-1.5 bg-primarys text-[15px] text-white font-medium rounded-md   cursor-pointer "
                 >

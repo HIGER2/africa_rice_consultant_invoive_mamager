@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
@@ -10,7 +11,7 @@ class UserService
 {
     public function index()
     {
-        $all = User::all();
+        $all = User::whereNotIn('role', ['supervisor', 'consultant'])->get();
         return Inertia::render('views/Users', [
             'users' => $all,  // <-- ici on passe les utilisateurs
         ]);
@@ -47,14 +48,18 @@ class UserService
         }
     }
 
-    public function deleteUser($id)
+    public function deleteUser($uuid)
     {
         try {
-            $user = User::findOrFail($id);
+            $user  = Auth::user();
+            if ($user === $uuid) {
+                return redirect()->back()->with('error', 'An error occurred while creating the consultant. Please try again.');
+            }
+            $user = User::firstWhere('uuid', $uuid);
             $user->delete();
-            return response()->json(['success' => true, 'message' => 'Utilisateur supprimé']);
+            return redirect()->redirect()->with('success', 'Consultant created successfully.');
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return redirect()->back()->with('error', 'An error occurred while creating the consultant. Please try again.');
         }
     }
 

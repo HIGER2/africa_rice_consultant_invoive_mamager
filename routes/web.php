@@ -44,11 +44,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ConsultantController::class, 'store'])->name('consultants.store');
         Route::get('/{uuid}', [ConsultantController::class, 'show'])->name('consultants.show');
         Route::get('/{uuid}/edit', [ConsultantController::class, 'edit'])->name('consultants.edit');
-        Route::put('/{uuid}', [ConsultantController::class, 'update'])->name('consultants.update');
+        Route::put('/{consultant}', [ConsultantController::class, 'update'])->name('consultants.update');
         Route::delete('/{uuid}', [ConsultantController::class, 'destroy'])->name('consultants.destroy');
     });
     Route::controller(UserController::class)->prefix('users')->group(function () {
         Route::get('/', 'index')->name('admin.users.index');
         Route::get('/{id}', 'show')->name('admin.users.show');
+        Route::delete('/{uuid}', 'destroy')->name('admin.users.delete');
     });
 });

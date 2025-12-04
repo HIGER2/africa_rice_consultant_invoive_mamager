@@ -19,6 +19,8 @@ class ConsultantDetailResource extends JsonResource
             'resno' => $this->resno,
             'name' => $this->name,
             'last_name' => $this->last_name,
+            'phone' => $this->phone,
+            'institution' => $this->institution,
             'gender' => $this->gender,
             'nationality' => $this->nationality,
             'country_of_birth' => $this->country_of_birth,

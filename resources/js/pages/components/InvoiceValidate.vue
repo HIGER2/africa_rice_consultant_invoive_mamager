@@ -10,6 +10,7 @@ const props=defineProps({
 
 
 let role = props.userRole
+let processing = ref(false)
 // let role:string = "supervisor"
 
 const validation = reactive({
@@ -31,7 +32,6 @@ const validation = reactive({
     finance_contract_validated: props.invoice.validations?.finance_contract_validated ?? false,
   }
 });
-
 
 
 
@@ -61,13 +61,18 @@ const submitValidation = (role: 'supervisor' | 'hr' | 'finance') => {
         [role]:{...validation[role]},  // les champs du rôle courant
         service: role          // le service courant
     };
+    processing.value =true
     router.post(`/invoices/${props?.invoice.uuid}/validate`,payload,{
         onSuccess: (page) => {
                 console.log('Validation envoyée avec succès', page);
-                router.reload()
+                router.visit(`/invoices/${props?.invoice.uuid}`)
+                
             },
             onError: (errors) => {
                 console.log('Erreurs retournées :', errors);
+            },
+            onFinish:()=>{
+                processing.value = false
             }
     })
 };
@@ -94,15 +99,17 @@ const submitValidation = (role: 'supervisor' | 'hr' | 'finance') => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto  mt-4 border border-gray-200 space-y-6 p-4 bg-white shadow rounded">
+  <div class="no-print max-w-3xl mx-auto  mt-4 border border-gray-200 space-y-6 p-4 bg-white shadow rounded">
     <h2 class="font-semibold text-lg mb-2">Validation {{ role }}</h2>
     <!-- <pre>{{ invoice.validations }}</pre> -->
     <div v-for="field in serviceFields[role]" :key="field" class="flex items-center mb-2">
       <input type="checkbox" v-model="validation[role][field]" :id="field" class="mr-2"/>
       <label :for="field" class="capitalize">{{ field.replace('_', ' ') }}</label>
     </div>
-    <button @click="submitValidation(role)" class="mt-3 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-      Validate & submit
+    <button
+    :disabled="processing"
+    @click="submitValidation(role)" class="mt-3 cursor-pointer bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+      {{ processing ? 'Processing...':'Validate & submit '}}
     </button>
   </div>
 </template>

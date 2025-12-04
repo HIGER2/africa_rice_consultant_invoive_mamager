@@ -19,7 +19,7 @@ class ConsultantController extends Controller
 {
     public function index()
     {
-        $consultants = Consultant::with('bankDetails', 'supervisor')->orderByDesc('created_at')->paginate(15);
+        $consultants = Consultant::with('bankDetails', 'supervisor')->orderByDesc('created_at')->get();
         // Use resource collection and keep pagination structure
         $data = ConsultantResource::collection($consultants);
         return Inertia::render('views/Consultant', [
@@ -106,18 +106,20 @@ class ConsultantController extends Controller
                 $consultant->bankDetails()->create($bankData);
             }
             // creer user auth 
-            User::create(
-                [
-                    'name' => $consultant->name,
-                    'last_name' => $consultant->last_name,
-                    'email' => $consultant->email,
-                    // 'phone' => $consultant->phone,
-                    'role' => 'consultant',
-                    'consultant_id' => $consultant->id,
-                    // 'password' => bcrypt(Str::random(12)), // mot de passe temporaire
-                    // 'uuid' => (string) Str::uuid(),
-                ]
-            );
+            if ($consultant->email_cgiar) {
+                User::create(
+                    [
+                        'name' => $consultant->name,
+                        'last_name' => $consultant->last_name,
+                        'email' => $consultant->email_cgiar,
+                        'role' => 'consultant',
+                        'consultant_id' => $consultant->id,
+                        // 'password' => bcrypt(Str::random(12)), // mot de passe temporaire
+                        // 'uuid' => (string) Str::uuid(),
+                    ]
+                );
+            }
+
             // creer les superviseur
             if (!$supervisorUser->user) {
                 $supervisorUser->user()->create(
@@ -160,9 +162,9 @@ class ConsultantController extends Controller
         ]);
     }
 
-    public function update(ConsultantRequest $request, string $uuid)
+    public function update(ConsultantRequest $request, string $consultant)
     {
-        $consultant = Consultant::where('uuid', $uuid)->firstOrFail();
+        $consultant = Consultant::where('uuid', $consultant)->firstOrFail();
         $data = $request->validated();
 
         // // Look up supervisor by email
@@ -189,12 +191,35 @@ class ConsultantController extends Controller
             'bankData' => $bankData,
         ]);
 
+        $supervisorUser = Supervisor::firstOrCreate(
+            ['email' => $data['supervisor']['email']], // condition
+            [
+                ...$data['supervisor'],
+            ]
+        );
+
         // Update consultant without bank data and supervisor_email
         unset($data['bank_name'], $data['iban'], $data['swift_code'], $data['supervisor_email']);
+        $data["supervisor_id"] = $supervisorUser->id;
         $consultant->update($data);
 
         // Update or create bank data
         $bank = $consultant->bankDetails()->first();
+        // update Or create user Account 
+        // creer user auth 
+        if ($consultant->email_cgiar) {
+
+            $consultant->user()->updateOrcreate(
+                ['consultant_id' => $consultant->id],
+                [
+                    'name' => $consultant->name,
+                    'last_name' => $consultant->last_name,
+                    'email' => $consultant->email_cgiar,
+                    'role' => 'consultant',
+                    'consultant_id' => $consultant->id,
+                ]
+            );
+        }
         if ($bank) {
             $bank->update($bankData);
         } elseif (!empty($bankData['iban']) || !empty($bankData['bank_name'])) {

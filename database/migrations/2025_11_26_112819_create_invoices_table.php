@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->uuid('uuid')->unique()->nullable();
             // Relation
-            $table->foreignId('consultant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('consultant_id')->nullable()->constrained()->onDelete('set null');
             $table->string('invoice_number')->unique();
             // Localisation & contrat
             $table->string('location')->nullable();

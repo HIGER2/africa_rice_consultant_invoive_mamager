@@ -2,10 +2,11 @@
   <button 
     @click="handleLogout" 
     :disabled="processing"
-    class="px-4 py-2 bg-primarys cursor-pointer text-white rounded "
+    class="px-4 py-2   bg-zinc-200 border border-zinc-300  cursor-pointer text-primarys rounded "
   >
+  Sign out
   <i class="uil uil-signout"></i>
-    {{ processing ? 'Logging out...' : 'Logout' }}
+    <!-- {{ processing ? 'Logging out...' : 'Logout' }} -->
   </button>
 </template>
 

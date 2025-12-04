@@ -1,6 +1,7 @@
 <template>
   <div class="flex  flex-col print:min-h-screen print:bg-white h-screen bg-zinc-100">
     <Sidebar  :user :items="menuItems" />
+    <!-- {{ user.role }} -->
     <div class="flex-1 overflow-auto p-2 print:overflow-visible">
       <main class="w-full print:min-h-screen h-full bg-white  shadow print:overflow-visible print:shadow-none  overflow-hidden rounded-2xl p-3">
         <div class="w-full print:min-h-screen h-full overflow-auto print:overflow-visible">
@@ -29,6 +30,15 @@ const menuItems = [
     {
       name: 'Invoices',
       link: '/',
+      role: 'hr',
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primarys group-hover:text-gray-700 transition-colors duration-200" viewBox="0 0 24 24">
+      <path fill="currentColor" d="m17.275 20.25l3.475-3.45l-1.05-1.05l-2.425 2.375l-.975-.975l-1.05 1.075l2.025 2.025ZM6 9h12V7H6v2Zm12 14q-2.075 0-3.538-1.463T13 18q0-2.075 1.463-3.538T18 13q2.075 0 3.538 1.463T23 18q0 2.075-1.463 3.538T18 23ZM3 22V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v6.675q-.475-.225-.975-.375T19 11.075V5H5v14.05h6.075q.125.775.388 1.475t.687 1.325L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5L3 22Zm3-5h5.075q.075-.525.225-1.025t.375-.975H6v2Zm0-4h7.1q.95-.925 2.213-1.463T18 11H6v2Zm-1 6.05V5v14.05Z"/>
+  </svg>`
+    },
+    {
+      name: 'My Invoices',
+      link: '/',
+      role: 'consultant',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primarys group-hover:text-gray-700 transition-colors duration-200" viewBox="0 0 24 24">
       <path fill="currentColor" d="m17.275 20.25l3.475-3.45l-1.05-1.05l-2.425 2.375l-.975-.975l-1.05 1.075l2.025 2.025ZM6 9h12V7H6v2Zm12 14q-2.075 0-3.538-1.463T13 18q0-2.075 1.463-3.538T18 13q2.075 0 3.538 1.463T23 18q0 2.075-1.463 3.538T18 23ZM3 22V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v6.675q-.475-.225-.975-.375T19 11.075V5H5v14.05h6.075q.125.775.388 1.475t.687 1.325L12 22l-1.5-1.5L9 22l-1.5-1.5L6 22l-1.5-1.5L3 22Zm3-5h5.075q.075-.525.225-1.025t.375-.975H6v2Zm0-4h7.1q.95-.925 2.213-1.463T18 11H6v2Zm-1 6.05V5v14.05Z"/>
   </svg>`
@@ -53,7 +63,7 @@ const menuItems = [
     {
       name: 'Consultants',
       link: '/consultants',
-      role: 'Requester',
+      role: 'hr',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primarys group-hover:text-gray-700 transition-colors duration-200" fill="currentColor" viewBox="0 0 24 24">
         <path d="M16 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zm-8 0c1.656 0 3-1.344 3-3S9.656 5 8 5 5 6.344 5 8s1.344 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 2.02 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
       </svg>`
@@ -61,7 +71,7 @@ const menuItems = [
     {
       name: 'Users',
       link: '/users',
-      role: 'Requester',
+      role: 'hr',
       icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primarys group-hover:text-gray-700 transition-colors duration-200" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 12c2.7 0 4-1.8 4-4s-1.3-4-4-4-4 1.8-4 4 1.3 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/>
       </svg>`

@@ -6,6 +6,8 @@ import ModalComponent from '../components/ModalComponent.vue';
 import { ref } from 'vue';
 import AddUserComponent from '../components/AddUserComponent.vue';
 import { useComposables } from '../../composables';
+import { Form, router,useForm  } from '@inertiajs/vue3'
+
 const userModal = ref(null)
 
 defineProps({
@@ -26,7 +28,26 @@ const columns=[
   {key:'last_name',label:'last name'},
   {key:'email',label:'email'},
   {key:'role',label:'role'},
+  {key:'action',label:''},
 ]
+
+const destroy =(uuid)=>{
+  if (!confirm('Are you sure you want to continue?')) {
+  return;
+}
+  router.delete(`/users/${uuid}`,{
+    onSuccess:(data)=>{
+      console.log('succes',data);
+  },
+  onError:(error)=>{
+
+    console.log("erreur",error);
+    
+  }
+  })
+  console.log(uuid);
+  
+}
 </script>
 
 
@@ -52,7 +73,15 @@ const columns=[
     <div class="w-full p-4">
       <!-- <pre>{{ users.length }}</pre>
       <pre>{{ users }}</pre> -->
-      <TableComponent :columns="columns" :data="users"/>
+      <TableComponent :columns="columns" :data="users">
+
+        <template #action="{row}">
+          <!-- {{ row.role }} -->
+          <button type="button" v-if="row.role !== 'admin'" @click="destroy(row.uuid)">
+            <i class="uil uil-trash"></i>
+          </button>
+        </template>
+      </TableComponent>
     </div>
   </AdminLayout>
 </template>

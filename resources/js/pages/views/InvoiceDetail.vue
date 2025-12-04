@@ -55,12 +55,27 @@ let stateStatus = (status,role)=>{
 
   return false
 }
+
+
+const printPage = () => {
+  window.print()
+}
+
 </script>
 
 <template>
 <div>
     <AdminLayout>
-      <div class="max-w-3xl mx-auto p-6 bg-white rounded border border-gray-200 space-y-6">
+      <div class="max-w-3xl print:p-0 print:w-full print:h-full mx-auto p-6 bg-white rounded print:border-0 border border-gray-200 space-y-6">
+            <div class="flex justify-end no-print">
+              <button
+                  @click="printPage"
+                  class="px-4 py-2 bg-white border border-gray-200 text-primarys cursor-pointer rounded-lg hover:bg-gray-50"
+                >
+                <i class="uil uil-print"></i>
+                  Print
+            </button>
+          </div>
     <!-- Facture Header -->
             <div class="flex justify-between items-center mb-4">
               <h1 class="text-3xl font-bold">Facture #{{ data.invoice_number }}</h1>
@@ -69,11 +84,23 @@ let stateStatus = (status,role)=>{
                 {{ data.status.replace('_', ' ').toUpperCase() }}
               </span> -->
             </div>
-
-            <!-- Facture Info -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b pb-4">
-              <div><span class="font-semibold">Location:</span> {{ data.location }}</div>
+            
+            <!-- Consultant Info -->
+            <section class="grid grid-cols-1 print:grid-cols-2 print:gap-4 md:grid-cols-2 gap-4 border-b pb-4">
+              <div><span class="font-semibold">ResNo:</span> {{ data.resno }}</div>
+              <div><span class="font-semibold">Name:</span> {{ data.name }} {{ data.last_name }}</div>
               <div><span class="font-semibold">Contract Period:</span> {{ data.contract_period_from }} → {{ data.contract_period_to }}</div>
+              <div><span class="font-semibold">Email:</span> {{ data.email }}</div>
+              <div><span class="font-semibold">Phone:</span> {{ data.phone }}</div>
+              <div><span class="font-semibold">Position:</span> {{ data.position }}</div>
+              <div><span class="font-semibold">Department:</span> {{ data.department }}</div>
+              <div><span class="font-semibold">Bank:</span> {{ data.bank_name }}</div>
+              <div><span class="font-semibold">IBAN OR RIB:</span> {{ data.iban }}</div>
+              <div><span class="font-semibold">SWIFT:</span> {{ data.swift_code }}</div>
+            </section>
+            <!-- Facture Info -->
+            <section class="grid grid-cols-1 print:grid-cols-2 print:gap-4 md:grid-cols-2 gap-4 border-b pb-4">
+              <div><span class="font-semibold">Location:</span> {{ data.location }}</div>
               <div><span class="font-semibold">Period Dates:</span> {{ data.date_from }} → {{ data.date_to }}</div>
               <div><span class="font-semibold">Honoraires Mensuel:</span> {{ data.honoraires_mensuel }}</div>
               <div><span class="font-semibold">Jours Travaillés:</span> {{ data.jours_travailles }}</div>
@@ -83,18 +110,6 @@ let stateStatus = (status,role)=>{
               <div><span class="font-semibold">Clearance:</span> {{ data.clearance_required }}</div>
             </section>
 
-            <!-- Consultant Info -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b pb-4">
-              <div><span class="font-semibold">ResNo:</span> {{ data.resno }}</div>
-              <div><span class="font-semibold">Name:</span> {{ data.name }} {{ data.last_name }}</div>
-              <div><span class="font-semibold">Email:</span> {{ data.email }}</div>
-              <div><span class="font-semibold">Phone:</span> {{ data.phone }}</div>
-              <div><span class="font-semibold">Position:</span> {{ data.position }}</div>
-              <div><span class="font-semibold">Department:</span> {{ data.department }}</div>
-              <div><span class="font-semibold">Bank:</span> {{ data.bank_name }}</div>
-              <div><span class="font-semibold">IBAN:</span> {{ data.iban }}</div>
-              <div><span class="font-semibold">SWIFT:</span> {{ data.swift_code }}</div>
-            </section>
 
             <!-- Documents -->
             <section class="border-b pb-4">
@@ -104,14 +119,18 @@ let stateStatus = (status,role)=>{
                   v-if="data.rapport_activite_file"
                   :href="data.rapport_activite_file"
                   target="_blank"
-                  class="text-blue-600 hover:underline"
-                >Rapport Activité</a>
+                  class="text-blue-600 truncate hover:underline"
+                >
+                 Activite file : {{ data.rapport_activite_file.split('/').pop() }}
+                </a>
                 <a
                   v-if="data.clearance_file"
                   :href="data.clearance_file"
                   target="_blank"
-                  class="text-blue-600 hover:underline"
-                >Clearance</a>
+                  class="text-blue-600 truncate hover:underline"
+                >
+                 Clearance file : {{ data.clearance_file.split('/').pop() }}
+                </a>
               </div>
             </section>
 

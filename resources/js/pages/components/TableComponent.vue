@@ -11,11 +11,15 @@
     </thead>
     <tbody>
     <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="hover:bg-zinc-50 text-nowrap font-medium text-gray-700 text-sm cursor-pointer">
+
           <!-- <th>{{ rowIndex + 1 }}</th> -->
+           
           <td v-for="col in columns" :key="col.key">
+            
             <slot :name="col.key" :row="row">
               {{ row[col.key] }}
             </slot>
+          
           </td>
         </tr>
     </tbody>

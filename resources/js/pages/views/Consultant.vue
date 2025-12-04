@@ -3,6 +3,7 @@
 import { Link, router } from '@inertiajs/vue3'
 import TableComponent from '../components/TableComponent.vue';
 import AdminLayout from '../../layouts/AdminLayout.vue';
+import { exportToExcel } from '../../composables';
 
 const props = defineProps({
   consultants: Object,
@@ -11,8 +12,8 @@ const props = defineProps({
 
 const columns = [
   { label: "ResNo", key: "resno" },
-  { label: "Nom", key: "name" },
-  { label: "Prénom", key: "last_name" },
+  { label: "Name", key: "name" },
+  { label: "Lste name", key: "last_name" },
   { label: "Genre", key: "gender" },
   { label: "Nationalité", key: "nationality" },
   { label: "Pays de naissance", key: "country_of_birth" },
@@ -51,9 +52,9 @@ const columns = [
   { label: "Hosted Personnel", key: "hosted_personnel" },
   { label: "Hosted/Seconded Personnel", key: "hosted_seconded_personnel" },
   { label: "Nationalité secondaire", key: "secondary_nationality" },
-  { label: "Banque", key: "bank_name" },
-  { label: "IBAN", key: "iban" },
-  { label: "SWIFT", key: "swift_code" },
+  // { label: "Banque", key: "bank_name" },
+  // { label: "IBAN", key: "iban" },
+  // { label: "SWIFT", key: "swift_code" },
   { label: "", key: "actions" },
 ];
 
@@ -64,6 +65,15 @@ function remove(uuid) {
 
 function goTo(page) {
   router.get(`${urls.index}?page=${page}`)
+}
+
+
+
+const exportCSV=(columns,data)=>{
+  // console.log(columns);
+  exportToExcel(columns.filter(item => 
+    item.key !== 'actions'
+),data)
 }
 </script>
 
@@ -76,12 +86,20 @@ function goTo(page) {
     <!-- Header + bouton Ajouter -->
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Consultants</h1>
+       <div class="flex items-center gap-4">
+            <button 
+        @click="exportCSV(columns,consultants.data)"
+        class="btn ">
+          Export <i class="uil uil-export"></i>
+        </button>
       <Link
         :href="urls.create"
-        class="btn btn-primary btn-sm"
+        class="btn btn-soft "
       >
-        Ajouter un consultant
+         New consultant
+          <i class="uil uil-plus-circle"></i>
       </Link>
+       </div>
     </div>
 
     <!-- Tableau -->
@@ -100,24 +118,24 @@ function goTo(page) {
       </template>
       <template #actions="{ row }">
         <div class="flex gap-2">
-          <Link
+          <!-- <Link
             :href="`/consultants/${row.uuid}`"
             class="btn btn-sm btn-info"
           >
             Voir
-          </Link>
+          </Link> -->
           <Link
             :href="`/consultants/${row.uuid}/edit`"
-            class="btn btn-sm btn-warning"
+            class="btn btn-sm btn-soft"
           >
-            Modifier
+            Edit
           </Link>
-          <button
+          <!-- <button
             @click="remove(row.uuid)"
             class="btn btn-sm btn-error"
           >
             Supprimer
-          </button>
+          </button> -->
         </div>
       </template>
     </TableComponent>

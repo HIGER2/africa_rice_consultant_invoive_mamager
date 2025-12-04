@@ -15,9 +15,8 @@ class InvoiceResource extends JsonResource
             'consultant_id' => $this->consultant_id,
             'invoice_number' => $this->invoice_number,
             'location' => $this->location,
-            'contract_period_from' => $this->contract_period_from,
-            'contract_period_to' => $this->contract_period_to,
-            'is_forfaitaire_contract' => $this->is_forfaitaire_contract ? 'Oui' : 'Non',
+
+            'is_forfaitaire_contract' => $this->is_forfaitaire_contract ? 'Yes' : 'No',
             'forfaitaire_amount' => $this->forfaitaire_amount,
             'honoraires_mensuel' => $this->honoraires_mensuel,
             'jours_travailles' => $this->jours_travailles,
@@ -25,11 +24,11 @@ class InvoiceResource extends JsonResource
             'date_to' => $this->date_to,
             'honoraires_a_payer' => $this->honoraires_a_payer,
             'status' => $this->status,
-            'rapport_activite_required' => $this->rapport_activite_required ? 'Oui' : 'Non',
+            'rapport_activite_required' => $this->rapport_activite_required ? 'Yes' : 'No',
             'rapport_activite_file' => $this->rapport_activite_file
                 ? Storage::url($this->rapport_activite_file)
                 : null,
-            'clearance_required' => $this->clearance_required ? 'Oui' : 'Non',
+            'clearance_required' => $this->clearance_required ? 'Yes' : 'No',
             'clearance_file' => $this->clearance_file
                 ? Storage::url($this->clearance_file)
                 : null,
@@ -40,6 +39,8 @@ class InvoiceResource extends JsonResource
             'resno' => $this->consultant->resno ?? null,
             'name' => $this->consultant->name ?? null,
             'last_name' => $this->consultant->last_name ?? null,
+            'contract_period_from' => $this->consultant->date_from,
+            'contract_period_to' => $this->consultant->date_to,
             'email' => $this->consultant->email ?? null,
             'phone' => $this->consultant->phone ?? null,
             'position' => $this->consultant->position ?? null,

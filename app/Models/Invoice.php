@@ -57,7 +57,7 @@ class Invoice extends Model
 
         if ($role === 'finance') {
             // Finance voit uniquement les factures en attente de traitement finance
-            return $query->whereIn('status', ['pending_finance', 'approuved']);
+            return $query->whereIn('status', ['pending_finance', 'approved']);
         }
 
         if ($role === 'supervisor') {
@@ -69,7 +69,7 @@ class Invoice extends Model
 
         if ($role === 'consultant') {
             // Le consultant voit uniquement ses propres factures
-            return $query->where('consultant_id', $user->id);
+            return $query->where('consultant_id', $user->consultant->id);
         }
 
         // Par défaut, ne rien retourner si le rôle n’est pas reconnu

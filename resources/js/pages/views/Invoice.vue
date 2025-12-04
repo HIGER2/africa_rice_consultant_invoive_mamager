@@ -5,6 +5,7 @@ import TableComponent from '../components/TableComponent.vue';
 import AdminLayout from '../../layouts/AdminLayout.vue';
 import { ref, watch } from 'vue';
 import InvoiceStatusBadge from '../components/InvoiceStatusBadge.vue';
+import { exportToExcel } from '../../composables';
 
 const props = defineProps({
   invoices: Object,
@@ -20,6 +21,11 @@ const columns = [
   // { label: "UUID", key: "uuid" },
   // { label: "Consultant ID", key: "consultant_id" },
   { label: "Invoice Number", key: "invoice_number" },
+   { label: "ResNo", key: "resno" },
+  { label: "Name", key: "name" },
+  { label: "Last Name", key: "last_name" },
+  { label: "Amount to Pay", key: "honoraires_a_payer" },
+  { label: "Status", key: "status" },
   { label: "Location", key: "location" },
   { label: "Contract From", key: "contract_period_from" },
   { label: "Contract To", key: "contract_period_to" },
@@ -29,15 +35,12 @@ const columns = [
   { label: "Days Worked", key: "jours_travailles" },
   { label: "From Date", key: "date_from" },
   { label: "To Date", key: "date_to" },
-  { label: "Amount to Pay", key: "honoraires_a_payer" },
-  { label: "Status", key: "status" },
+  
   // { label: "Rapport Activité Required", key: "rapport_activite_required" },
   { label: "Rapport Activité File", key: "rapport_activite_file" },
   // { label: "Clearance Required", key: "clearance_required" },
   { label: "Clearance File", key: "clearance_file" },
-  { label: "ResNo", key: "resno" },
-  { label: "Name", key: "name" },
-  { label: "Last Name", key: "last_name" },
+ 
   { label: "Email", key: "email" },
   { label: "Phone", key: "phone" },
   { label: "Position", key: "position" },
@@ -60,17 +63,18 @@ watch([from, to, search], () => {
 })
 
 const clearFilters = () => {
-  from.value = ""
-  to.value = ""
-  search.value = ""
-  // console.log('====================================');
-  // console.log(props.urls.index);
-  // console.log('====================================');
-  router.get(props.urls.index, {}, {
-    preserveState: false,
-    preserveScroll: true,
-    replace: true,
-  })
+  // from.value = ""
+  // to.value = ""
+  // search.value = ""
+  // // console.log('====================================');
+  // // console.log(props.urls.index);
+  // // console.log('====================================');
+  // router.get(props.urls.index, {}, {
+  //   preserveState: false,
+  //   preserveScroll: true,
+  //   replace: true,
+  // })
+    router.visit('/');
 }
 
 // const applyFilters = () => {
@@ -98,11 +102,21 @@ const selectedDate = ref("");
 function updateDate(event) {
   selectedDate.value = event.target.value;
 }
+
+
+const exportCSV=(columns,data)=>{
+  // console.log(columns);
+  exportToExcel(columns.filter(item => 
+    item.key !== 'actions' && 
+    item.key !== 'clearance_file' && 
+    item.key !== 'rapport_activite_file'
+),data,'invoice.xlsx')
+}
 </script>
 
 <template>
 <div>
-    <AdminLayout>
+    <AdminLayout v-slot="{user}">
       <div class="p-6 max-w-full mx-auto space-y-6">
 
       <!-- Header + bouton Ajouter -->
@@ -157,7 +171,19 @@ function updateDate(event) {
                   class="input input-bordered w-60"
                 /> -->
 
-                <Link :href="props.urls.create" class="btn btn-primary">Ajouter</Link>
+                <button 
+                @click="exportCSV(columns,invoices.data)"
+                class="btn ">
+                  Export <i class="uil uil-export"></i>
+                </button>
+                <!-- {{ user.role }} -->
+                <template v-if="user.role=='consultant' || user.role=='admin'">
+                    
+                 <Link :href="props.urls.create" class="btn btn-soft border">
+                 New Invoice
+                 <i class="uil uil-plus-circle"></i>
+                </Link>
+                </template>
               </div>
 
             </div>
@@ -240,6 +266,7 @@ function updateDate(event) {
             <template #rapport_activite_file="{ row }">
               <div class="flex gap-2">
                 <a
+                v-if="row.rapport_activite_file"
                   :href="`${row.rapport_activite_file}`"
                   class="  text-blue-600 underline"
                   :download="row?.rapport_activite_file?.split('/').pop()"
@@ -247,6 +274,8 @@ function updateDate(event) {
                   download
                   <i class="uil uil-download-alt text-[15px]"></i>
                 </a>
+                <span v-else>N/A</span>
+
                 <!-- <Link
                   :href="`/invoices/${row.uuid}/edit`"
                   class="btn btn-sm btn-warning"
@@ -259,6 +288,7 @@ function updateDate(event) {
             <template #clearance_file="{ row }">
               <div class="flex gap-2">
                 <a
+                 v-if="row?.clearance_file"
                   :href="`${row.clearance_file}`"
                   class=" text-blue-600 underline"
                   :download="row?.clearance_file?.split('/').pop()"
@@ -266,6 +296,7 @@ function updateDate(event) {
                   download
                   <i class="uil uil-download-alt text-[15px]"></i>
                 </a>
+                <span v-else>N/A</span>
                 <!-- <Link
                   :href="`/invoices/${row.uuid}/edit`"
                   class="btn btn-sm btn-warning"

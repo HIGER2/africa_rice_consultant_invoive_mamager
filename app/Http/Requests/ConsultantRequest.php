@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Consultant;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ConsultantRequest extends FormRequest
 {
@@ -13,15 +15,46 @@ class ConsultantRequest extends FormRequest
 
     public function rules(): array
     {
+        // Récupérer l'UUID du consultant depuis l'URL
+        $uuid = $this->route('consultant');
+
+        // Chercher le consultant dans la base
+        $consultant = $uuid ? Consultant::where('uuid', $uuid)->first() : null;
+
+        // ID du consultant pour les règles de unique (null si création)
+        $consultantId = $consultant ? $consultant->id : null;
+
+        // ID du superviseur si existant
+        $supervisorId = $consultant && $consultant->supervisor ? $consultant->supervisor->id : null;
+
         return [
+            // Consultant
             'resno' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:50'],
+            'institution' => ['required', 'string', 'max:255'],
 
-            'phone' => ['nullable', 'string', 'unique:consultants,phone,' . $this->route('consultant'), 'max:50'],
-            'email' => ['required', 'email', 'unique:consultants,email,' . $this->route('consultant'), 'max:50'],
-            'email_cgiar' => ['nullable', 'email', 'unique:consultants,email_cgiar,' . $this->route('consultant'), 'max:50'],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('consultants', 'phone')->ignore($consultantId, 'id'),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+                'max:50',
+                Rule::unique('consultants', 'email')->ignore($consultantId, 'id'),
+            ],
+            'email_cgiar' => [
+                'nullable',
+                'string',
+                'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+                'max:50',
+                Rule::unique('consultants', 'email_cgiar')->ignore($consultantId, 'id'),
+            ],
 
             'nationality' => ['required', 'string', 'max:255'],
             'country_of_birth' => ['required', 'string', 'max:255'],
@@ -30,56 +63,81 @@ class ConsultantRequest extends FormRequest
             'date_from' => ['required', 'date'],
             'date_to' => ['required', 'date', 'after_or_equal:date_from'],
 
-            'position' => ['required', 'string', 'max:255'],
-            'resource_type' => ['required', 'string', 'max:255'],
-            'job_level' => ['required', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
+            'resource_type' => ['nullable', 'string', 'max:255'],
+            'job_level' => ['nullable', 'string', 'max:255'],
 
-            // 'supervisor_email' => ['required', 'string', 'email', 'max:255'],
+            'costc' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
+            'dutypost' => ['nullable', 'string', 'max:255'],
 
-            'costc' => ['required', 'string', 'max:255'],
-            'department' => ['required', 'string', 'max:255'],
-            'dutypost' => ['required', 'string', 'max:255'],
-
-            'original_hire_date' => ['required', 'date'],
-            'seniority' => ['required', 'integer'],
+            'original_hire_date' => ['nullable', 'date'],
+            'seniority' => [
+                'nullable',
+                'regex:/^\d+(\.\d+)?$/'
+            ],
 
             'birthdate' => ['required', 'date'],
-
             'nationality_at_birth' => ['required', 'string', 'max:255'],
             'marital_status' => ['required', 'string', 'max:255'],
 
-            'seconded_personnel' => ['required', 'boolean'],
+            'seconded_personnel' => ['nullable', 'boolean'],
             'shared_working_arrangement' => ['required', 'boolean'],
 
-            'root' => ['required', 'string', 'max:255'],
-            'division' => ['required', 'string', 'max:255'],
-            'group' => ['required', 'string', 'max:255'],
-            'cg_unit' => ['required', 'string', 'max:255'],
-            'sub_unit' => ['required', 'string', 'max:255'],
+            'root' => ['nullable', 'string', 'max:255'],
+            'division' => ['nullable', 'string', 'max:255'],
+            'group' => ['nullable', 'string', 'max:255'],
+            'cg_unit' => ['nullable', 'string', 'max:255'],
+            'sub_unit' => ['nullable', 'string', 'max:255'],
 
-            'bg_level' => ['required', 'string', 'max:255'],
-            'cgiar_workforce_group' => ['required', 'string', 'max:255'],
+            'bg_level' => ['nullable', 'string', 'max:255'],
+            'cgiar_workforce_group' => ['nullable', 'string', 'max:255'],
 
-            'dutypost_classification' => ['required', 'string', 'max:255'],
-            'education_level' => ['required', 'string', 'max:255'],
+            'dutypost_classification' => ['nullable', 'string', 'max:255'],
+            'education_level' => ['nullable', 'string', 'max:255'],
 
-            'host_center' => ['required', 'string', 'max:255'],
-            'hosted_personnel' => ['required', 'boolean'],
-            'hosted_seconded_personnel' => ['required', 'boolean'],
-            'secondary_nationality' => ['required', 'string', 'max:255'],
+            'host_center' => ['nullable', 'string', 'max:255'],
+            'hosted_personnel' => ['nullable', 'boolean'],
+            'hosted_seconded_personnel' => ['nullable', 'boolean'],
+            'secondary_nationality' => ['nullable', 'string', 'max:255'],
 
-            // bank
-            'bank_name' => ['required', 'string', 'max:150'],
-            'iban' => ['required', 'string', 'max:34'],
-            'swift_code' => ['required', 'string', 'max:11'],
-            // supervisor
-            'supervisor.name' => ['required', 'string', 'max:255'],
-            'supervisor.last_name' => ['required', 'string', 'max:255'],
-            'supervisor.position' => ['required', 'string', 'max:255'],
-            'supervisor.email' => ['required', 'email', 'max:255', 'unique:supervisors,email'],
-            'supervisor.resno' => ['required', 'string', 'max:255', 'unique:supervisors,resno'],
+            // Bank
+            'bank_name' => ['nullable', 'string', 'max:150'],
+            'iban' => ['nullable', 'string', 'max:34'],
+            'swift_code' => ['nullable', 'string', 'max:11'],
+
+            // Supervisor
+            'supervisor.email' => [
+                'nullable',
+                'string',
+                'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
+                Rule::unique('supervisors', 'email')->ignore($supervisorId, 'id'),
+            ],
+            'supervisor.name' => [
+                'required_with:supervisor.email',
+                'string',
+                'max:255'
+            ],
+            'supervisor.last_name' => [
+                'required_with:supervisor.email',
+                'string',
+                'max:255'
+            ],
+            'supervisor.position' => [
+                'required_with:supervisor.email',
+                'string',
+                'max:255'
+            ],
+
+            'supervisor.resno' => [
+                'required_with:supervisor.email',
+                'string',
+                'max:255',
+                Rule::unique('supervisors', 'resno')->ignore($supervisorId, 'id'),
+            ],
         ];
     }
+
 
     public function messages(): array
     {

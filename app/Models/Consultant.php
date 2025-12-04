@@ -16,6 +16,7 @@ class Consultant extends Model
         'supervisor_id',
         'email',
         'email_cgiar',
+        'institution',
         'phone',
         'name',
         'last_name',
@@ -76,10 +77,21 @@ class Consultant extends Model
         return $this->belongsTo(Supervisor::class);
     }
 
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
     }
+    // App\Models\Consultant.php
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 
     protected static function booted()
     {

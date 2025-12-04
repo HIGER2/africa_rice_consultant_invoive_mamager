@@ -101,7 +101,7 @@ class InvoiceController extends Controller
     {
         $user = Auth::user();
         return Inertia::render('views/CreateInvoice', [
-            'consultant' => $user->consultant->load('bankDetails'),
+            'consultant' => $user?->consultant?->load('bankDetails'),
             'isEdit' => false,
             'actionUrl' => route('consultants.store'),
             'cancelUrl' => route('consultants.index'),
@@ -116,17 +116,17 @@ class InvoiceController extends Controller
             'consultant.name' => 'required|string',
             'consultant.last_name' => 'required|string',
             'consultant.email' => 'required|email',
-            'consultant.phone' => 'nullable|numeric',
-            'consultant.institution' => 'nullable|string',
-            'consultant.position' => 'nullable|string',
+            'consultant.phone' => 'required|numeric',
+            'consultant.institution' => 'required|string',
+            'consultant.position' => 'required|string',
 
             'bank.bank_name' => 'required|string',
             'bank.iban' => 'required|string',
-            'bank.swift_code' => 'required|string',
+            'bank.swift_code' => 'nullable|string',
 
             'invoice.location' => 'required|string',
-            'invoice.contract_period_from' => 'required|date',
-            'invoice.contract_period_to' => 'required|date',
+            'invoice.date_from' => 'required|date',
+            'invoice.date_to' => 'required|date',
             'invoice.honoraires_mensuel' => 'required|numeric',
             'invoice.jours_travailles' => 'required|numeric',
             'invoice.date_from' => 'required|date',
@@ -142,6 +142,7 @@ class InvoiceController extends Controller
             'invoice.clearance_required' => 'required|boolean',
             'invoice.clearance_file' => 'required_if:invoice.clearance_required,1|nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
+
         try {
 
             // $invoiceData = $validated['invoice'];

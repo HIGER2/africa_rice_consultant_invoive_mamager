@@ -27,7 +27,9 @@ class AuthService
     public function sendOtp($request)
     {
         $request->validate([
-            'email' => 'required|email'
+            'email' =>  'required',
+            'string',
+            'regex:/^[^@\s]+@[^@\s]+\.[^@\s]+$/',
         ]);
         $user = User::where('email', $request->email)->first();
         $roleAuth = ['admin', 'consultant', 'supervisor', 'hr', 'finance', 'Requester', 'BudgetOfficer', 'Vendor', 'Finance'];
